@@ -42,7 +42,7 @@ class Image
     {
         $sources = [];
         foreach (Config::breakpoints() as $breakpoint) {
-            if ($breakpoint > $this->width) {
+            if ($this->width && ($breakpoint > $this->width)) {
                 continue;
             }
             $image = clone $this;
