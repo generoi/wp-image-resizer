@@ -42,7 +42,7 @@ class Preload implements Rewriter
         }
     }
 
-    public static function buildLink(string $content): string
+    public static function buildLink(string $content, $priority = 'high'): string
     {
         $src = preg_match('/src="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
         $srcset = preg_match('/srcset="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
@@ -51,7 +51,8 @@ class Preload implements Rewriter
         if ($src && $srcset && $sizes) {
             // @see https://web.dev/preload-responsive-images/#imagesrcset-and-imagesizes
             return sprintf(
-                '<link rel="preload" as="image" href="%s" imagesrcset="%s" imagesizes="%s">',
+                '<link rel="preload" fetchpriority="%s" as="image" href="%s" imagesrcset="%s" imagesizes="%s">',
+                $priority,
                 $src,
                 $srcset,
                 $sizes
