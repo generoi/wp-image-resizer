@@ -1,7 +1,7 @@
 import lozad from 'lozad'
 
 window.wpImageResizer = {
-  selector: 'img[loading="lazy"], iframe[loading="lazy"], video[loading="lazy"]',
+  selector: 'img[loading="lazy"], iframe[loading="lazy"], video[loading="lazy"], [data-background-image], [data-background-image-set]',
   options: {
     loaded(element) {
       // Support data-sizes="auto"
@@ -18,6 +18,8 @@ window.wpImageResizer = {
       delete element.dataset.srcset;
       delete element.dataset.sizes;
       delete element.dataset.src;
+      delete element.dataset.backgroundImage;
+      delete element.dataset.backgroundImageSet;
     },
   },
   ...(window.wpImageResizer || {})

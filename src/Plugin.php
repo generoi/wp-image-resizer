@@ -7,6 +7,7 @@ use GeneroWP\ImageResizer\Rewriters\LazyLoad;
 use GeneroWP\ImageResizer\Rewriters\Preload;
 use GeneroWP\ImageResizer\Rewriters\Urls;
 use GeneroWP\ImageResizer\Contracts\Rewriter;
+use GeneroWP\ImageResizer\Rewriters\LazyBackgrounds;
 
 use function Env\env;
 
@@ -61,6 +62,7 @@ class Plugin
         return apply_filters('wp-image-resizer/rewriters', [
             InlineStyles::class,
             LazyLoad::class,
+            LazyBackgrounds::class,
             Preload::class,
             Urls::class,
         ]);
