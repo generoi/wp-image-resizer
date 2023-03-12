@@ -29,6 +29,59 @@ IMAGERESIZER_DISABLED=false
 
 ## API
 
+See [Cloudflare docs](https://developers.cloudflare.com/images/image-resizing/url-format/#options) for transformation options.
+
+### Generate src and srcset from URL
+
+```php
+use GeneroWP\ImageResizer\Image;
+
+$image = new Image($url, [
+    'blur' => 50,
+]);
+
+return sprintf(
+    '<img loading="eager" class="wp-block-cover__image-background" src="%s" srcset="%s" sizes="%s">',
+    $image->src(),
+    $image->srcset(),
+    '100vw'
+);
+```
+
+### Generate src and srcset from attachment
+
+```php
+use GeneroWP\ImageResizer\Image;
+
+$image = Image::fromAttachment($bannerImageId, 'full', [
+    'fit' => 'cover',
+    'height' => 350 * 2,
+]);
+
+return sprintf(
+    '<img loading="eager" class="wp-block-cover__image-background" src="%s" srcset="%s" sizes="%s">',
+    $image->src(),
+    $image->srcset(),
+    '100vw'
+);
+```
+
+### Add a preload link tag to head
+
+```php
+use GeneroWP\ImageResizer\Rewriters\Preload;
+
+add_action('wp_head', function () {
+    if (is_singular('recipe')) {
+        $composer = new ContentRecipe();
+        $featured = $composer->featuredImageHtml(get_post());
+        echo Preload::buildLink($featured);
+    }
+}, 2);
+```
+
+### Filters
+
 ```php
 // Alter rewriters
 add_filter('wp-image-resizer/rewriters', function (array $rewriters) {
