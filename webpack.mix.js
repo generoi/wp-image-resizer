@@ -1,4 +1,2 @@
 const mix = require('laravel-mix');
-
-mix.sass('assets/styles/main.scss', 'dist/')
-  .js('assets/scripts/main.js', 'dist/');
+mix.js('scripts/wp-image-resizer.js', 'dist/');

@@ -8,10 +8,10 @@ class RoboFile extends \Robo\Tasks
 {
     use \Generoi\Robo\Task\Placeholder\loadTasks;
 
-    public $machineName = 'wp-plugin-boilerplate';
-    public $name = 'WP Plugin Boilerplate';
-    public $namespace = 'PluginBoilerplate';
-    public $description = 'A boilerplate WordPress plugin';
+    public $machineName = 'wp-image-resizer';
+    public $name = 'WP Image Resizer';
+    public $namespace = 'ImageResizer';
+    public $description = 'A plugin which provides dynamic image sizes through a CDN';
 
     public function rename($machineName = null, $options = [
         'force' => false,
