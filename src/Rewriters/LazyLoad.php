@@ -19,7 +19,7 @@ class LazyLoad implements Rewriter
         if (str_contains($html, 'loading="lazy"')) {
             $html = str_replace(
                 ' src=',
-                sprintf(' src="%s" data-src=', Config::placeholderImage()),
+                ' data-src=',
                 $html
             );
 

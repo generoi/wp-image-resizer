@@ -9,7 +9,6 @@ use function Env\env;
 class Config
 {
     public const FILTER_DEFAULT_SETTINGS = 'wp-image-resizer/config/default';
-    public const FILTER_PLACEHOLDER_IMAGE = 'wp-image-resizer/config/placeholder';
     public const FILTER_BREAKPOINTS = 'wp-image-resizer/config/breakpoints';
 
     public static function zone(): string
@@ -25,14 +24,6 @@ class Config
     public static function enabled(): bool
     {
         return ! is_admin() && ! env('IMAGERESIZER_DISABLED');
-    }
-
-    public static function placeholderImage(): string
-    {
-        return apply_filters(
-            self::FILTER_PLACEHOLDER_IMAGE,
-            'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
-        );
     }
 
     /**

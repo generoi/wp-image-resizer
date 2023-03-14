@@ -8,6 +8,8 @@ use GeneroWP\ImageResizer\Image;
 
 class LazyBackgrounds implements Rewriter
 {
+    const TRANSPARENT_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+
     public function __construct()
     {
         add_filter('the_content', [$this, 'filterStyles'], 11);
@@ -26,7 +28,7 @@ class LazyBackgrounds implements Rewriter
             $newAttribute = sprintf(
                 'data-background-image="%s" %s',
                 $url,
-                str_replace($url, Config::placeholderImage(), $attribute),
+                str_replace($url, self::TRANSPARENT_PIXEL, $attribute),
             );
             $content = str_replace($attribute, $newAttribute, $content);
         }

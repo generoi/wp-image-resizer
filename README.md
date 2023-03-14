@@ -125,11 +125,6 @@ add_filter('wp-image-resizer/config/default', function (array $breakpoints) {
         'quality' => 90
     ];
 });
-
-// Alter default resizing settings
-add_filter('wp-image-resizer/config/placeholder', function (string $image) {
-    return 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
-});
 ```
 
 
