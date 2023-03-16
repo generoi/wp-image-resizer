@@ -42,6 +42,12 @@ const observer = lozad(
 );
 observer.observe();
 
+// Facet WP integration
+document.addEventListener('facetwp-loaded', function() {
+  observer.observe();
+});
+
+
 // Expose for others to use
 window.wpImageResizer = {
   ...window.wpImageResizer,
