@@ -61,13 +61,7 @@ class Image
     public function url(): string
     {
         $url = apply_filters(self::URL_FILTER, $this->url);
-
-        return sprintf(
-            '%s/%s/%s',
-            untrailingslashit(Config::zone()),
-            urlencode($this->serializeSettings()),
-            $url,
-        );
+        return Config::resizer()->buildUrl($url, $this->settings);
     }
 
     /**
@@ -92,15 +86,6 @@ class Image
         }
 
         return $settings;
-    }
-
-    protected function serializeSettings(): string
-    {
-        $settings = [];
-        foreach ($this->settings as $key => $value) {
-            $settings[] = "$key=$value";
-        }
-        return implode(',', $settings);
     }
 
     /**

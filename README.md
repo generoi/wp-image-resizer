@@ -4,7 +4,10 @@
 
 ## Requirements
 
-A cloudflare CDN zone with image resizing enabled.
+A resizer service, this plugin currently supports:
+
+- A cloudflare CDN zone with image resizing enabled.
+- KeyCDN with pull zone configured
 
 Note that you'll need to manage the `loading` attribute yourself. Only tags with
 `loading="lazy"` will get rewritten to use `lozad.js`. You should ensure that
@@ -29,7 +32,7 @@ IMAGERESIZER_DISABLED=false
 
 ## API
 
-See [Cloudflare docs](https://developers.cloudflare.com/images/image-resizing/url-format/#options) for transformation options.
+See [Cloudflare docs](https://developers.cloudflare.com/images/image-resizing/url-format/#options) or [KeyCDN docs](https://www.keycdn.com/support/image-processing) for transformation options.
 
 ### Generate src and srcset from URL
 

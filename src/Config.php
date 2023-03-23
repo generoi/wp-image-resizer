@@ -3,6 +3,8 @@
 namespace GeneroWP\ImageResizer;
 
 use Exception;
+use GeneroWP\ImageResizer\Contracts\Resizer;
+use GeneroWP\ImageResizer\Resizers\Cloudflare;
 
 use function Env\env;
 
@@ -10,6 +12,7 @@ class Config
 {
     public const FILTER_DEFAULT_SETTINGS = 'wp-image-resizer/config/default';
     public const FILTER_BREAKPOINTS = 'wp-image-resizer/config/breakpoints';
+    public const FILTER_RESIZER = 'wp-image-resizer/config/resizer';
 
     public static function zone(): string
     {
@@ -42,10 +45,19 @@ class Config
      */
     public static function defaultSettings(): array
     {
-        return apply_filters(self::FILTER_DEFAULT_SETTINGS, [
-            'quality' => 82,
-            'fit' => 'scale-down',
-            'format' => 'auto',
-        ]);
+        return apply_filters(
+            self::FILTER_DEFAULT_SETTINGS,
+            self::resizer()->defaultSettings()
+        );
+    }
+
+    public static function resizer(): Resizer
+    {
+        static $resizer = null;
+        if (! $resizer) {
+            $resizer = apply_filters(self::FILTER_RESIZER, new Cloudflare());
+        }
+
+        return $resizer;
     }
 }
