@@ -42,7 +42,7 @@ class Preload implements Rewriter
         }
     }
 
-    public static function buildLink(string $content, $priority = 'high'): string
+    public static function buildLink(string $content, string $priority = 'high'): string
     {
         $src = preg_match('/src="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
         $srcset = preg_match('/srcset="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
