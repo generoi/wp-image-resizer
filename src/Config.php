@@ -35,8 +35,9 @@ class Config
     public static function breakpoints(): array
     {
         return apply_filters(self::FILTER_BREAKPOINTS, [
-            ...range(50, 500, 50),
-            ...range(600, 2000, 100),
+            ...range(50, 200, 50),
+            ...range(200, 1000, 100),
+            ...range(1000, 2000, 200),
         ]);
     }
 
