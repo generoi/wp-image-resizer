@@ -58,10 +58,13 @@ class Image
         return implode(', ', $sources);
     }
 
-    public function url(): string
+    /**
+     * @param array<string,int|string> $settings
+     */
+    public function url(array $settings = []): string
     {
         $url = apply_filters(self::URL_FILTER, $this->url);
-        return Config::resizer()->buildUrl($url, $this->settings);
+        return Config::resizer()->buildUrl($url, array_merge($this->settings, $settings));
     }
 
     /**
