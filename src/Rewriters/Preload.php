@@ -85,6 +85,14 @@ class Preload implements Rewriter
             );
         }
 
+        if ($src && !$srcset) {
+            return sprintf(
+                '<link rel="preload" fetchpriority="%s" as="image" href="%s">',
+                $priority,
+                $src,
+            );
+        }
+
         return '';
     }
 }
