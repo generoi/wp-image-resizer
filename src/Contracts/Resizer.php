@@ -13,4 +13,9 @@ interface Resizer
      * @return array<string,int|string>
      */
     public function defaultSettings(): array;
+
+    /**
+     * @return array<string,string>
+     */
+    public function focalPointParam(float $left, float $top): array;
 }

@@ -16,8 +16,6 @@ class KeyCdn implements Resizer
         $targetHost = parse_url(Config::zone(), PHP_URL_HOST);
         $url = str_replace($sourceHost, $targetHost, $sourceUrl);
 
-        unset($settings['gravity']); // not supported
-
         foreach ($settings as $key => $value) {
             $url = add_query_arg($key, $value, $url);
         }
@@ -28,6 +26,13 @@ class KeyCdn implements Resizer
     {
         return [
             'format' => 'webp',
+        ];
+    }
+
+    public function focalPointParam(float $left, float $top): array
+    {
+        return [
+            'crop' => sprintf('fp,%s,%s', $left, $top),
         ];
     }
 }

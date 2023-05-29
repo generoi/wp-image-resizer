@@ -81,10 +81,8 @@ class Image
         // When cropping with fit: "cover" and fit: "crop", this parameter
         // defines the side or point that should not be cropped
         if ($attachmentId && in_array($settings['fit'] ?? '', ['fit', 'cover'])) {
-            if ($gravity = $this->gravity()) {
-                $settings = array_merge([
-                    'gravity' => $gravity,
-                ], $settings);
+            if ($focalPoint = $this->focalPoint()) {
+                $settings = array_merge($focalPoint, $settings);
             }
         }
 
@@ -92,9 +90,9 @@ class Image
     }
 
     /**
-     * Get gravity from plugins if they exist.
+     * Get focal point from plugins if they exist.
      */
-    protected function gravity(): ?string
+    protected function focalPoint(): ?string
     {
         if (! $this->attachmentId) {
             return null;
@@ -109,9 +107,9 @@ class Image
             return null;
         }
 
-        $x = round($focus['left'] / 100, 1);
-        $y = round($focus['top'] / 100, 1);
-
-        return sprintf('%sx%s', $x, $y);
+        return Config::resizer()->focalPointParam(
+            round($focus['left'] / 100, 1),
+            round($focus['top'] / 100, 1),
+        );
     }
 }

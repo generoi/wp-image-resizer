@@ -37,4 +37,11 @@ class Cloudflare implements Resizer
             'format' => 'auto',
         ];
     }
+
+    public function focalPointParam(float $left, float $top): array
+    {
+        return [
+            'gravity' => sprintf('%sx%s', $left, $top),
+        ];
+    }
 }
