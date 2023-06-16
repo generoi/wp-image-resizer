@@ -52,8 +52,12 @@ class LazyLoad implements Rewriter
             [$tag, $tagName] = $match;
             switch ($tagName) {
                 case 'img':
-                    if ($addImgLoadingAttr && !str_contains($tag, ' loading=')) {
-                        $filteredTag = wp_img_tag_add_loading_attr($tag, $context);
+                    if ($addImgLoadingAttr && ! str_contains($tag, ' loading=')) {
+                        // We need to use our own implementation since height/width still isnt set, we set eager explicitly.
+                        $loading = wp_get_loading_attr_default($context) ?: 'eager';
+                        $loading = apply_filters('wp_img_tag_add_loading_attr', $loading, $tag, $context);
+                        $loading = in_array($loading, ['lazy', 'eager']) ? $loading : 'lazy';
+                        $filteredTag = str_replace('<img', sprintf('<img loading="%s"', $loading), $tag);
                         $content = str_replace($tag, $filteredTag, $content);
                     }
                     break;
