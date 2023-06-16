@@ -13,6 +13,7 @@ class Urls implements Rewriter
         add_filter('wp_content_img_tag', [$this, 'filterImgTag']);
         add_filter('wp_get_attachment_image', [$this, 'filterImgTag']);
         add_filter('wp_calculate_image_srcset', [$this, 'filterSrcset'], 10, 5);
+        add_filter('wp_resource_hints', [$this, 'dnsPrefetch'], -100, 2);
     }
 
     public function filterImgTag(string $html): string
@@ -54,5 +55,20 @@ class Urls implements Rewriter
         }
 
         return $sources;
+    }
+
+    /**
+     * @param array<int,array<mixed>> $hints
+     * @return array<int,array<mixed>>
+     */
+    public function dnsPrefetch(array $hints, string $type): array
+    {
+        if ($type === 'preconnect') {
+            $hints[] = [
+                'href' => '//' . parse_url(Config::zone(), PHP_URL_HOST),
+                'crossorigin',
+            ];
+        }
+        return $hints;
     }
 }
