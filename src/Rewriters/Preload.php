@@ -31,8 +31,9 @@ class Preload implements Rewriter
 
             while ($block = array_shift($blocks)) {
                 if (in_array($block['blockName'], $preloadBlocks)) {
-                    $content = str_replace('<img ', '<img loading="eager" ', $block['innerHTML']);
-                    $content = str_replace('<video ', '<video loading="eager" ', $block['innerHTML']);
+                    $content = !empty($block['innerHTML']) ? $block['innerHTML'] : render_block($block);
+                    $content = str_replace('<img ', '<img loading="eager" ', $content);
+                    $content = str_replace('<video ', '<video loading="eager" ', $content);
                     $content = wp_filter_content_tags($content, 'preload');
                     $content = apply_filters(self::FILTER_CONTENT_TAGS, $content);
 
