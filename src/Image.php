@@ -92,7 +92,7 @@ class Image
     /**
      * Get focal point from plugins if they exist.
      */
-    protected function focalPoint(): ?string
+    protected function focalPoint(): ?array
     {
         if (! $this->attachmentId) {
             return null;
