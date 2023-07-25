@@ -2,9 +2,11 @@
 
 namespace GeneroWP\ImageResizer\Rewriters;
 
-use GeneroWP\ImageResizer\Config;
 use GeneroWP\ImageResizer\Contracts\Rewriter;
 
+/**
+ * Lazy load images, videos and iframes.
+ */
 class LazyLoad implements Rewriter
 {
     public function __construct()
@@ -101,7 +103,8 @@ class LazyLoad implements Rewriter
     /**
      * Alter the HTML to use data-src for lazy loaded content.
      *
-     * Note that this filter only for <img> and <iframe>, not on <video>.
+     * Note that this runs as a filter only for <img> and <iframe>. For <video>
+     * it's invoked directly.
      */
     public function filterLazyLoadTag(string $html): string
     {

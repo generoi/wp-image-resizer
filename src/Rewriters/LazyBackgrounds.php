@@ -2,10 +2,11 @@
 
 namespace GeneroWP\ImageResizer\Rewriters;
 
-use GeneroWP\ImageResizer\Config;
 use GeneroWP\ImageResizer\Contracts\Rewriter;
-use GeneroWP\ImageResizer\Image;
 
+/**
+ * Lazy load inline background images defined with a style attribute.
+ */
 class LazyBackgrounds implements Rewriter
 {
     const TRANSPARENT_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';

@@ -6,6 +6,9 @@ use GeneroWP\ImageResizer\Config;
 use GeneroWP\ImageResizer\Contracts\Rewriter;
 use GeneroWP\ImageResizer\Image;
 
+/**
+ * Rewrite all image urls
+ */
 class Urls implements Rewriter
 {
     public function __construct()

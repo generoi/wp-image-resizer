@@ -5,6 +5,10 @@ namespace GeneroWP\ImageResizer\Rewriters;
 use GeneroWP\ImageResizer\Contracts\Rewriter;
 use GeneroWP\ImageResizer\Image;
 
+/**
+ * Rewrite inline stylesheet image urls. Currently only supports
+ * background-image property.
+ */
 class InlineStyles implements Rewriter
 {
     public function __construct()

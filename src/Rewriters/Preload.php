@@ -4,6 +4,9 @@ namespace GeneroWP\ImageResizer\Rewriters;
 
 use GeneroWP\ImageResizer\Contracts\Rewriter;
 
+/**
+ * Add preload links to <head>.
+ */
 class Preload implements Rewriter
 {
     public const FILTER_SHOULD_STOP = 'wp-image-resizer/preload/should_stop';
