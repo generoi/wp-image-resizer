@@ -87,11 +87,21 @@ class LazyLoad implements Rewriter
      */
     protected function addVideoLoadingAttribute(string $tag, string $context): string
     {
-        $value = match (wp_get_loading_attr_default($context)) {
-            false => false,
-            'eager' => 'eager',
-            default => 'lazy',
-        };
+        // WordPress 6.3.0
+        if (function_exists('wp_get_loading_optimization_attributes')) {
+            $optimization = wp_get_loading_optimization_attributes('video', [
+                'width' => str_contains($tag, ' width="') ? 100 : null,
+                'height' => str_contains($tag, ' height="') ? 100 : null,
+                'loading' => null,
+            ], $context);
+            $value = isset($optimization['loading'] ) ? $optimization['loading'] : 'lazy';
+        } else {
+            $value = match (wp_get_loading_attr_default($context)) {
+                false => false,
+                'eager' => 'eager',
+                default => 'lazy',
+            };
+        }
 
         if ($value) {
             $tag = str_replace( '<video', sprintf('<video loading="%s"', esc_attr($value)), $tag);
