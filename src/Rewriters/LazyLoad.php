@@ -13,7 +13,7 @@ class LazyLoad implements Rewriter
     {
         add_filter('wp_get_attachment_image', [$this, 'filterLazyLoadTag'], 100);
         add_filter('wp_content_img_tag', [$this, 'filterLazyLoadTag'], 100);
-        add_filter('the_content', [$this, 'filterLoadingAttribute'], 9);
+        add_filter('the_content', [$this, 'filterVideoLoadingAttribute'], 11);
         add_filter('wp_lazy_loading_enabled', [$this, 'enableVideoLoading'], 9, 2);
     }
 
@@ -29,13 +29,12 @@ class LazyLoad implements Rewriter
     }
 
     /**
-     * Add loading attribute to all <video> tags as well as the default core
-     * <img> and <iframe>. We need to run this before wp_filter_content_tags()
-     * since it doesnt take videos into account.
+     * Add loading attribute to all <video> tags.
      *
      * @see wp_filter_content_tags
+     * @see https://github.com/WordPress/WordPress/blob/baf1c9d87a332773d69ad365aa15a01315ce8b46/wp-includes/media.php#L1810
      */
-    public function filterLoadingAttribute(string $content): string
+    public function filterVideoLoadingAttribute(string $content): string
     {
         $context = current_filter();
         $addVideoLoadingAttr = wp_lazy_loading_enabled('video', $context);
@@ -50,29 +49,36 @@ class LazyLoad implements Rewriter
             return $content;
         }
 
+        // Rough estimation of wp_increase_content_media_count() since it's
+        // already been invoked and we cannot retrieve exact values after that
+        // fact.
+        $mediaCount = 0;
+
         foreach ($matches as $match) {
             [$tag, $tagName] = $match;
             switch ($tagName) {
                 case 'img':
-                    if ($addImgLoadingAttr && ! str_contains($tag, ' loading=')) {
-                        // We need to use our own implementation since height/width still isnt set, we set eager explicitly.
-                        $loading = wp_get_loading_attr_default($context) ?: 'eager';
-                        $loading = apply_filters('wp_img_tag_add_loading_attr', $loading, $tag, $context);
-                        $loading = in_array($loading, ['lazy', 'eager']) ? $loading : 'lazy';
-                        $filteredTag = str_replace('<img', sprintf('<img loading="%s"', $loading), $tag);
-                        $content = str_replace($tag, $filteredTag, $content);
+                    if ($addImgLoadingAttr) {
+                        $mediaCount++;
                     }
                     break;
                 case 'iframe':
-                    if ($addIframeLoadingAttr && !str_contains($tag, ' loading=')) {
-                        $filteredTag = wp_iframe_tag_add_loading_attr($tag, $context);
-                        $content = str_replace($tag, $filteredTag, $content);
+                    if ($addIframeLoadingAttr) {
+                        $mediaCount++;
                     }
                     break;
                 case 'video':
-                    if ($addVideoLoadingAttr && !str_contains($tag, ' loading=')) {
-                        $filteredTag = $this->addVideoLoadingAttribute($tag, $context);
-                        $content = str_replace($tag, $filteredTag, $content);
+                    if ($addVideoLoadingAttr) {
+                        $mediaCount++;
+
+                        if (str_contains($tag, ' loading=')) {
+                            break;
+                        }
+
+                        if ($mediaCount > wp_omit_loading_attr_threshold()) {
+                            $filteredTag = $this->addVideoLoadingAttribute($tag, $context);
+                            $content = str_replace($tag, $filteredTag, $content);
+                        }
                     }
                     break;
             }
