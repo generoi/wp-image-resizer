@@ -26,6 +26,7 @@ class KeyCdn implements Resizer
     {
         return [
             'format' => 'webp',
+            'fit' => 'cover',
         ];
     }
 
