@@ -26,7 +26,9 @@ class Urls implements Rewriter
             return $html;
         }
 
-        $image = new Image($src);
+        $image = new Image(
+            htmlspecialchars_decode($src)
+        );
         $html = preg_replace(
             '/ src="([^"]+)"/',
             sprintf(' src="%s"', $image->url()),
