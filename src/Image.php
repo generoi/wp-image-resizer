@@ -91,6 +91,8 @@ class Image
 
     /**
      * Get focal point from plugins if they exist.
+     *
+     * @return null|array<string,string>
      */
     protected function focalPoint(): ?array
     {

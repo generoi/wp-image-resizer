@@ -20,7 +20,7 @@ class LazyLoad implements Rewriter
     /**
      * Opt in to use "loading" attribute for videos.
     */
-    public function enableVideoLoading(bool $loading, string $tagName)
+    public function enableVideoLoading(bool $loading, string $tagName): bool
     {
         if ($tagName === 'video') {
             return true;
@@ -100,7 +100,7 @@ class LazyLoad implements Rewriter
                 'height' => str_contains($tag, ' height="') ? 100 : null,
                 'loading' => null,
             ], $context);
-            $value = isset($optimization['loading'] ) ? $optimization['loading'] : 'lazy';
+            $value = isset($optimization['loading']) ? $optimization['loading'] : 'lazy';
         } else {
             $value = match (wp_get_loading_attr_default($context)) {
                 false => false,
@@ -110,7 +110,7 @@ class LazyLoad implements Rewriter
         }
 
         if ($value) {
-            $tag = str_replace( '<video', sprintf('<video loading="%s"', esc_attr($value)), $tag);
+            $tag = str_replace('<video', sprintf('<video loading="%s"', esc_attr($value)), $tag);
             return $this->filterLazyLoadTag($tag);
         }
         return $tag;
