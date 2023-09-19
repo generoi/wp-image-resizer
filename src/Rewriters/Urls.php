@@ -22,20 +22,46 @@ class Urls implements Rewriter
     public function filterImgTag(string $html): string
     {
         $src = preg_match('/src="([^"]+)"/', $html, $matchSrc) ? $matchSrc[1] : '';
-        if (! $src) {
-            return $html;
+        if ($src) {
+            $image = new Image(
+                $this->decodeAttribute($src)
+            );
+            $html = preg_replace(
+                '/ src="([^"]+)"/',
+                sprintf(' src="%s"', $image->url()),
+                $html
+            );
         }
 
-        $image = new Image(
-            htmlspecialchars_decode($src)
-        );
-        $html = preg_replace(
-            '/ src="([^"]+)"/',
-            sprintf(' src="%s"', $image->url()),
-            $html
-        );
+        $srcset = preg_match('/srcset="([^"]+)"/', $html, $matchSrc) ? $matchSrc[1] : '';
+        if ($srcset) {
+            $html = preg_replace(
+                '/ srcset="([^"]+)"/',
+                sprintf(' srcset="%s"', $this->decodeAttribute($srcset)),
+                $html
+            );
+        }
 
         return $html;
+    }
+
+    /**
+     * WP runs src and srcset through esc_attr() which escapes & that can cause
+     * issues. We decode the escaped attributes.
+     */
+    protected function decodeAttribute(string $attribute): string
+    {
+        $replacements = [
+            '&amp;' => '&',
+            '&#038;' => '&',
+            '&#x26;' => '&',
+        ];
+
+        return str_replace(
+            array_keys($replacements),
+            array_values($replacements),
+            $attribute
+        );
     }
 
     /**
