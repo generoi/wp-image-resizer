@@ -34,6 +34,17 @@ IMAGERESIZER_DISABLED=false
 
 See [Cloudflare docs](https://developers.cloudflare.com/images/image-resizing/url-format/#options) or [KeyCDN docs](https://www.keycdn.com/support/image-processing) for transformation options.
 
+### Pass custom options
+
+You can pass custom options to the resizer when using `wp_get_attachment_image` by setting `data-resizer-args` which supportes [`wp_parse_args`](https://developer.wordpress.org/reference/functions/wp_parse_args/) type strings.
+
+```php
+wp_get_attachment_image($profileImage, 'full', false, [
+  'data-resizer-args' => 'crop=1:1&quality=50',
+  'sizes' => '(min-width: 40em) 48px, (min-width: 68.75em) 56px, (min-width: 87.5em) 64px, 40px'
+])
+```
+
 ### Generate src and srcset from URL
 
 ```php

@@ -21,10 +21,15 @@ class Urls implements Rewriter
 
     public function filterImgTag(string $html): string
     {
+        // Support passing custom settings through a data-resizer-args attribute
+        $customArgs = preg_match('/data-resizer-args="([^"]+)"/', $html, $matchSrc) ? $matchSrc[1] : [];
+        $settings = wp_parse_args($customArgs, []);
+
         $src = preg_match('/src="([^"]+)"/', $html, $matchSrc) ? $matchSrc[1] : '';
         if ($src) {
             $image = new Image(
-                $this->decodeAttribute($src)
+                $this->decodeAttribute($src),
+                $settings,
             );
             $html = preg_replace(
                 '/ src="([^"]+)"/',
@@ -35,6 +40,24 @@ class Urls implements Rewriter
 
         $srcset = preg_match('/srcset="([^"]+)"/', $html, $matchSrc) ? $matchSrc[1] : '';
         if ($srcset) {
+            // If there are data-resizer-args passed, we need to parse the
+            // `srcset` attribute and rebuild urls.
+            // Note this fails if there are `,` in the image urls
+            if ($settings) {
+                $sources = explode(',', $srcset);
+                $sources = array_map(function ($source) use ($settings) {
+                    [$source, $descriptor] = explode(' ', trim($source), 2);
+
+                    $image = new Image(
+                        $this->decodeAttribute($source),
+                        $settings,
+                    );
+
+                    return implode(' ', [$image->url(), $descriptor]);
+                }, $sources);
+                $srcset = implode(',', $sources);
+            }
+
             $html = preg_replace(
                 '/ srcset="([^"]+)"/',
                 sprintf(' srcset="%s"', $this->decodeAttribute($srcset)),
