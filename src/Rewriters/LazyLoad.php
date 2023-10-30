@@ -65,6 +65,9 @@ class LazyLoad implements Rewriter
                 case 'iframe':
                     if ($addIframeLoadingAttr) {
                         $mediaCount++;
+
+                        $filteredTag = $this->filterLazyLoadTag($tag);
+                        $content = str_replace($tag, $filteredTag, $content);
                     }
                     break;
                 case 'video':
@@ -119,7 +122,7 @@ class LazyLoad implements Rewriter
     /**
      * Alter the HTML to use data-src for lazy loaded content.
      *
-     * Note that this runs as a filter only for <img> and <iframe>. For <video>
+     * Note that this runs as a filter only for <img>. For <video> and <iframe>
      * it's invoked directly.
      */
     public function filterLazyLoadTag(string $html): string
@@ -135,7 +138,7 @@ class LazyLoad implements Rewriter
 
             if (str_contains($html, ' sizes')) {
                 $html = preg_replace('/ sizes="[^"]+"/', ' data-sizes="auto"', $html);
-            } else {
+            } elseif (str_contains($html, '<img')) {
                 $html = str_replace(' loading="lazy"', ' loading="lazy" data-sizes="auto"', $html);
             }
         }
