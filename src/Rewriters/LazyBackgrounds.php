@@ -26,6 +26,10 @@ class LazyBackgrounds implements Rewriter
         foreach ($attributes as $idx => $attribute) {
             $url = $urls[$idx];
 
+            if (! filter_var($url, FILTER_VALIDATE_URL)) {
+                continue;
+            }
+
             $newAttribute = sprintf(
                 'data-background-image="%s" %s',
                 $url,
