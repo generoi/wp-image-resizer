@@ -16,6 +16,7 @@ class Preload implements Rewriter
     /** @var string[] $imageBlocks */
     public array $imageBlocks = [
         'core/cover',
+        'core/video',
         'core/image',
         'core/media-text'
     ];
@@ -34,7 +35,7 @@ class Preload implements Rewriter
 
             while ($block = array_shift($blocks)) {
                 if (in_array($block['blockName'], $preloadBlocks)) {
-                    $content = ! empty(trim($block['innerHTML'] ?? '')) ? $block['innerHTML'] : render_block($block);
+                    $content = render_block($block);
                     $content = str_replace('<img ', '<img loading="eager" ', $content);
                     $content = str_replace('<video ', '<video loading="eager" ', $content);
                     $content = wp_filter_content_tags($content, 'preload');
@@ -52,25 +53,16 @@ class Preload implements Rewriter
 
     public static function buildLink(string $content, string $priority = 'high'): string
     {
-        // Note not supported in chrome
-        // @see https://stackoverflow.com/a/50682498
         if (str_contains($content, '<video')) {
-            $src = preg_match('/src="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
-            $type = match (true) {
-                str_contains($src, '.webm') => 'type/webm',
-                str_contains($src, '.mp4') => 'type/mp4',
-                default => null,
-            };
-
-            if (!$type) {
+            $src = preg_match('/ poster="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
+            if (! $src) {
                 return '';
             }
 
             return sprintf(
-                '<link rel="preload" fetchpriority="%s" as="video" href="%s" type="%s">',
+                '<link rel="preload" fetchpriority="%s" as="image" href="%s">',
                 $priority,
                 $src,
-                $type,
             );
         }
 
