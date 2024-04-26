@@ -44,7 +44,7 @@ observer.observe();
 
 // Facet WP integration
 document.addEventListener('facetwp-loaded', () => observer.observe());
-window.addEventListener('genero-cmp.consent', () => observer.observe());
+window.addEventListener('gds-cmp.consent', () => observer.observe());
 
 // Expose for others to use
 window.wpImageResizer = {
