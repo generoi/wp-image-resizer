@@ -18,6 +18,10 @@ class LazyBackgrounds implements Rewriter
 
     public function filterStyles(string $content): string
     {
+        if (apply_filters('wp-image-resizer/skip-lazy-load', wp_is_rest_endpoint())) {
+            return $content;
+        }
+
         preg_match_all('/style="[^"]*?background-image:\s*url\([\'"]?([^)]*?[\'"]?)\)/', $content, $matches);
 
         $attributes = $matches[0];

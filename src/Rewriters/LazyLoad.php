@@ -127,6 +127,10 @@ class LazyLoad implements Rewriter
      */
     public function filterLazyLoadTag(string $html): string
     {
+        if (apply_filters('wp-image-resizer/skip-lazy-load', wp_is_rest_endpoint())) {
+            return $html;
+        }
+
         if (str_contains($html, 'loading="lazy"')) {
             $html = str_replace(
                 ' src=',
