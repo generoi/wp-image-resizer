@@ -18,7 +18,7 @@ class InlineStyles implements Rewriter
 
     public function filterStyles(string $content): string
     {
-        preg_match_all('/style="[^"]*?background-image:\s*url\([\'"]?([^)]*?[\'"]?)\)/', $content, $matches);
+        preg_match_all('/style="[^"]*?background-image:\s*url\([\'"]?(.*?)[\'"]?\)/', $content, $matches);
 
         $attributes = $matches[0];
         $urls = $matches[1];
