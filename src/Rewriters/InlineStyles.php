@@ -26,7 +26,9 @@ class InlineStyles implements Rewriter
         foreach ($attributes as $idx => $attribute) {
             $url = $urls[$idx];
 
-            $image = new Image($url, ['width' => 1000]);
+            $image = new Image($url, apply_filters('wp-image-resizer/inline-background/args', [
+                'width' => 1000
+            ]));
             $newAttribute = str_replace($url, $image->url(), $attribute);
             $content = str_replace($attribute, $newAttribute, $content);
         }
