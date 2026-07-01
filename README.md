@@ -26,7 +26,11 @@ IMAGERESIZER_DISABLED=false
 ## Features
 
 - Use [lozad.js](https://github.com/ApoorvSaxena/lozad.js/) to lazyload images, iframes and videos
-- Support for `sizes="auto"` through `data-sizes="auto"`
+- Support for `sizes="auto"` through `data-sizes="auto"`, which is resolved
+  against the element's rendered box. For images using `object-fit: cover` or
+  `object-fit: contain` the painted image can be larger than its box, so the
+  intrinsic aspect ratio is taken into account to avoid requesting a too-small,
+  blurry candidate.
 - Preload first blocks image
 - Rewrite image URLs to use Cloudflare CDN
 - Replace all WP `srcset` with our Cloudflare Image Resizing URLs
