@@ -3,6 +3,7 @@
 namespace GeneroWP\ImageResizer\Rewriters;
 
 use GeneroWP\ImageResizer\Contracts\Rewriter;
+use WP_HTML_Tag_Processor;
 
 /**
  * Add preload links to <head>.
@@ -53,42 +54,66 @@ class Preload implements Rewriter
 
     public static function buildLink(string $content, string $priority = 'high'): string
     {
-        if (str_contains($content, '<video')) {
-            $src = preg_match('/ poster="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
-            if (! $src) {
-                return '';
+        $tag = new WP_HTML_Tag_Processor($content);
+
+        while ($tag->next_tag()) {
+            switch ($tag->get_tag()) {
+                case 'PICTURE':
+                    // Quite difficult to convert this to preload links since
+                    // queries cant fallthrough with preloads
+                    return '';
+                case 'VIDEO':
+                    $poster = $tag->get_attribute('poster');
+                    if (! $poster) {
+                        return '';
+                    }
+
+                    $attributes = [
+                        'rel' => 'preload',
+                        'fetchpriority' => $priority,
+                        'as' => 'image',
+                        'href' => $poster,
+                        'crossorigin' => $tag->get_attribute('crossorigin'),
+                    ];
+
+                    return sprintf('<link %s>', self::buildHtmlAttributes($attributes));
+                case 'IMG':
+                    $src = $tag->get_attribute('src');
+                    if (! $src) {
+                        return '';
+                    }
+                    $attributes = [
+                        'rel' => 'preload',
+                        'fetchpriority' => $priority,
+                        'as' => 'image',
+                        'href' => $src,
+                        'srcset' => $tag->get_attribute('srcset'),
+                        'sizes' => $tag->get_attribute('sizes'),
+                        'crossorigin' => $tag->get_attribute('crossorigin'),
+                    ];
+                    return sprintf('<link %s>', self::buildHtmlAttributes($attributes));
+            }
+        }
+        return '';
+    }
+
+    protected static function buildHtmlAttributes(array $attributes): string
+    {
+        $html = [];
+        foreach ($attributes as $attr => $value) {
+            if ($value === null) {
+                continue;
             }
 
-            return sprintf(
-                '<link rel="preload" fetchpriority="%s" as="image" href="%s">',
-                $priority,
-                $src,
-            );
+            if ($value === true) {
+                $html[] = $attr;
+            } elseif (in_array($attr, ['href', 'src', 'srcset'])) {
+                $html[] = $attr . '="' . esc_url($value) . '"';
+            } else {
+                $html[] = $attr . '="' . esc_attr($value) . '"';
+            }
         }
 
-        $src = preg_match('/src="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
-        $srcset = preg_match('/srcset="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
-        $sizes = preg_match('/sizes="([^"]+)"/', $content, $matchSrc) ? $matchSrc[1] : '';
-
-        if ($src && $srcset && $sizes) {
-            // @see https://web.dev/preload-responsive-images/#imagesrcset-and-imagesizes
-            return sprintf(
-                '<link rel="preload" fetchpriority="%s" as="image" href="%s" imagesrcset="%s" imagesizes="%s">',
-                $priority,
-                $src,
-                $srcset,
-                $sizes
-            );
-        }
-
-        if ($src && !$srcset) {
-            return sprintf(
-                '<link rel="preload" fetchpriority="%s" as="image" href="%s">',
-                $priority,
-                $src,
-            );
-        }
-
-        return '';
+        return implode(' ', $html);
     }
 }
