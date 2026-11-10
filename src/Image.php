@@ -24,10 +24,17 @@ class Image
 
     /**
      * @param array<string,int|string> $settings
+     * @throws \InvalidArgumentException If the attachment cannot be resolved to an image.
      */
     public static function fromAttachment(int $attachmentId, string $size = 'full', array $settings = []): Image
     {
-        [$url, $width, $height] = wp_get_attachment_image_src($attachmentId, $size);
+        $source = wp_get_attachment_image_src($attachmentId, $size);
+
+        if (! is_array($source)) {
+            throw new \InvalidArgumentException(sprintf('Could not resolve image attachment %d.', $attachmentId));
+        }
+
+        [$url, $width, $height] = $source;
 
         return new self($url, $settings, $width, $height, $attachmentId);
     }
